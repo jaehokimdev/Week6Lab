@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,17 +29,42 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
         HttpSession session = request.getSession();
-
-        if (username == null || username.equals("")) {
-           request.setAttribute("message", "Please enter username");
-           getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
-           return;
-        } else { 
-           session.setAttribute("loginUser", username);
-           getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
-           return;
+        String username = request.getParameter("username");
+        String action = request.getParameter("action");
+        String itemname = request.getParameter("itemname");
+        String[] item = request.getParameterValues("item");
+        ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
+        
+        switch (action) {
+            case "register": {
+                if (username == null || username.equals("")) {
+                    request.setAttribute("message", "Please enter username");
+                    doGet(request, response);
+                    break;
+                } else {
+                    session.setAttribute("loginUser", username);
+                    doGet(request, response);
+                    break;
+                }   
+            }
+            case "add": {
+                if (items == null){
+                    items = new ArrayList<String>();
+                }
+                items.add(itemname);
+                session.setAttribute("items", items);
+                doGet(request, response);
+                break;
+            }
+            case "delete": {
+                items.remove(String.valueOf(item[0]));
+                session.setAttribute("items", items);
+                doGet(request, response);
+                break;
+            }
         }
+
+        
     }
 }

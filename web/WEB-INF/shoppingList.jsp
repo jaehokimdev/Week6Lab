@@ -20,14 +20,16 @@
         
         <form action="" method="POST">
             <h2>Add Item</h2>
-            <input type="text" name="item"><input type="submit" value="Add Item">
+            <input type="text" name="itemname"><input type="submit" value="Add Item">
             <input type="hidden" name="action" value="add">
         </form>
         
         <form action="" method="POST">
-            <ul>
-                
-            </ul>
+            <br>
+            <c:forEach items="${items}" var="items">
+                &emsp;<input type="radio" name="item" values="${items}">${items}<br>
+            </c:forEach>
+            <br>
             <input type="submit" value="Delete">
             <input type="hidden" name="action" value="delete">
         </form>
