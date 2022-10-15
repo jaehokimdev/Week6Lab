@@ -19,5 +19,6 @@
             <br>
             <input type="submit" value="Register">
         </form>
+        ${message}
     </body>
 </html>
