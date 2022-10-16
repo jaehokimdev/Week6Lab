@@ -18,22 +18,21 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();        
+        HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        if (action == null || session.getAttribute("loginUser") == null) {
-            getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
-            return;
-        }else if (action.equals("logout")) {
-            session.invalidate();
-            getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
-            return;
+        
+        try{
+            if (session.getAttribute("loginUser") != null && !action.equals("logout")) {
+                getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
+            } else if (action != null && action.equals("logout")) {
+                session.invalidate();
+                getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+            } else {
+                getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
+            }
+        }catch(NullPointerException e){
+            getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
         }
-
-//        if (session.getAttribute("loginUser") == null) {
-//           getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
-//        } else {
-//           getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
-//        }
     }
 
     @Override
@@ -71,6 +70,12 @@ public class ShoppingListServlet extends HttpServlet {
                 items.remove(item);
                 session.setAttribute("items", items);
                 getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp").forward(request, response);
+                break;
+            }
+            case "logout": {
+                session.invalidate();
+                items.clear();
+                getServletContext().getRequestDispatcher("/WEB-INF/register.jsp").forward(request, response);
                 break;
             }
         }
